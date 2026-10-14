@@ -39,3 +39,6 @@
 .banner-actions{display:flex;gap:8px;flex-wrap:wrap}
 .filter-bar .reading-toggle{margin:0;white-space:nowrap;color:#6f7768}
 @media(max-width:760px){.top-actions .button span{display:none}.error-banner{flex-wrap:wrap}}
+.announcement-toggle{margin-top:14px}
+.announcement-toggle .rotate-down{transform:rotate(90deg)}
+.announcement-toggle .rotate-up{transform:rotate(-90deg)}
