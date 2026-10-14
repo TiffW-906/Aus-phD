@@ -18,4 +18,7 @@ export const officialSchema=z.object({
 });
 export type Official=z.infer<typeof officialSchema>;
 export const initialOfficial:Official={checkedOn,checkedAt:null,schools:{},announcements:[]};
+// Official school updates live in app/official-data.json, edited by the weekly
+// research routine through pull requests (see docs/official-updates.md).
+export function loadOfficial(raw:unknown):Official{return officialSchema.parse(raw);}
 export function effectiveSchools(data:Official){return universities.map(s=>({...s,...data.schools[s.id]}));}

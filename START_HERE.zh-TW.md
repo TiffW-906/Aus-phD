@@ -65,8 +65,14 @@ GitHub **Variables** 再加兩個：
 - 修改程式後推送到 `main`，GitHub Actions 會自動檢查並部署。
 - 定期按「匯出進度」備份。
 
+## 每週官方公告查核
+- 每週一早上，Claude 的排程任務會依 `docs/official-updates.md` 到各校官網查詢最新資訊。
+- 有實質變動時，Claude 只修改 `app/official-data.json`，並開一個標題為「官方公告更新 日期」的 Pull Request，內容列出各校變動、實際期限、對準備的影響和官方來源。
+- 你確認內容沒問題後按 Merge，網站會自動部署；沒有變動就不會開 PR。
+- 個人進度（任務、勾選、教授筆記）存在資料庫，不會被自動更新修改。
+
 ## 和原版的差異
-- ChatGPT 每週自動查核官方公告的排程沒有搬過來（那是 ChatGPT 帳號內的自動化）。官方公告 API（`/api/official`）仍在，現在只有登入的擁有者能讀寫；之後可以另外設定自動查核。
+- 官方公告原本存在資料庫，由 ChatGPT 直接寫入；現在改存在 repo 檔案 `app/official-data.json`，每次變動都經過你審核，也留有版本紀錄。
 - 原版的 `.openai/`、`scripts/official-sync.py` 與 `SOURCE_MANIFEST.json` 只適用於 ChatGPT Sites，已移除；需要時可從 git 歷史找回。
 
 ## 本機開發
