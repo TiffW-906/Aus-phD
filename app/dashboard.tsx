@@ -185,6 +185,8 @@ function SchoolModal({school:s,info,close,save}:{school:University;info:Workspac
 }
 
 function OfficialAnnouncements({data,error}:{data:Official;error:string}) {
-  const newest=data.announcements.slice(-3).reverse();
-  return <section className="panel announcement-panel"><SectionTitle eyebrow="OFFICIAL ANNOUNCEMENT WATCH" title="官方公告更新" action={<Badge tone="sage">最近查核 {dateLabel(data.checkedOn)}</Badge>}/>{error&&<p className="announcement-error">{error}</p>}{newest.length?newest.map(n=><article className="announcement-item" key={n.id}><div><Badge tone="sage">{universityName(n.school)}</Badge><small>查得 {dateLabel(n.detectedAt)}{n.publishedAt?` · 公告 ${dateLabel(n.publishedAt)}`:""}</small></div><h3>{n.title}</h3><p>{n.summary}</p><External href={n.source}>官方公告來源</External></article>):<p className="announcement-empty">目前尚無新增公告。新公告會顯示在這裡，學校資訊也會一併更新；你的個人進度與備註會保留。</p>}</section>;
+  const [showAll,setShowAll]=useState(false);
+  const all=[...data.announcements].reverse();
+  const newest=showAll?all:all.slice(0,3);
+  return <section className="panel announcement-panel"><SectionTitle eyebrow="OFFICIAL ANNOUNCEMENT WATCH" title="官方公告更新" action={<Badge tone="sage">最近查核 {dateLabel(data.checkedOn)}</Badge>}/>{error&&<p className="announcement-error">{error}</p>}{newest.length?newest.map(n=><article className="announcement-item" key={n.id}><div><Badge tone="sage">{universityName(n.school)}</Badge><small>查得 {dateLabel(n.detectedAt)}{n.publishedAt?` · 公告 ${dateLabel(n.publishedAt)}`:""}</small></div><h3>{n.title}</h3><p>{n.summary}</p><External href={n.source}>官方公告來源</External></article>):<p className="announcement-empty">目前尚無新增公告。新公告會顯示在這裡，學校資訊也會一併更新；你的個人進度與備註會保留。</p>}{all.length>3&&<button className="text-link announcement-toggle" aria-expanded={showAll} onClick={()=>setShowAll(v=>!v)}>{showAll?"收合，只看最新 3 則":`查看全部公告（共 ${all.length} 則）`}<ChevronRight size={14} className={showAll?"rotate-up":"rotate-down"}/></button>}</section>;
 }

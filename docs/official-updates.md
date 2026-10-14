@@ -39,6 +39,14 @@ unchanged. Identify a meaningful change by school, topic, published data and
 source. If official sources are inaccessible, keep existing facts and say in the
 run summary which parts could not be checked; do not mark them as verified.
 
+Some university sites (currently www.monash.edu and the unimelb.edu.au sites)
+answer cloud machines with a Cloudflare bot challenge (HTTP 403). Do not try to
+get around the challenge. For those schools, use WebSearch restricted to the
+school's official domain (`allowed_domains`). A change found this way may be
+included only when the search result attributes it to a specific official page
+URL; mark it in the announcement summary and the PR body with
+「（經搜尋取得，請點來源連結人工確認）」 so the owner verifies it before merging.
+
 ## Edit
 
 Only edit `app/official-data.json`:

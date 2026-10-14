@@ -1,6 +1,80 @@
 {
-  "checkedOn": "2026-10-13",
-  "checkedAt": null,
-  "schools": {},
-  "announcements": []
+  "checkedOn": "2026-10-14",
+  "checkedAt": "2026-10-14T03:00:22Z",
+  "schools": {
+    "sydney": {
+      "intake": "入學申請全年開放；現行 7/1 入學於同年 3/31 截止（僅入學）。國際生 RTP 獎學金官方時程：2028 RP1/2 於 2027/9/10 截止、11/16 起發結果；2028 RP3/4（下半年）預估 2027 年 12 月中截止、2028 年 2 月中起發結果（校方標示為估計）。"
+    },
+    "rmit": {
+      "ielts": "Art (DR208) 與 Design (DR235)：IELTS Academic 6.5 overall · 每科 ≥ 6.0",
+      "intake": "連續入學，獎學金另有輪次。現行 2027 中央獎學金輪（國際生）：2026/6/1 開放 EOI、8/30 EOI 截止、9/30 完整申請截止、11/23 起發 offer。2028 輪期限尚未公告。",
+      "note": "Art 申請研究計畫 2–5 頁；先討論教授與共同指導。自 2026 年 6 月起，EOI 須附 In-Principle Supervisor Supporting Statement 表。"
+    },
+    "unsw": {
+      "defer": "學院 Art & Design 頁列 2028 T1/T2/T3；學院總頁國際生獎學金表的開始時間列「2028」（國內生表列 T1 2028）。H2 開始與資助仍建議書面確認。",
+      "note": "EOI 時須英文達標並有至少一位教授支持；正式申請需兩位合資格教授。申請英文豁免者須在 EOI 截止前 8 週送出（2028 輪即約 2027/1/15）。"
+    }
+  },
+  "announcements": [
+    {
+      "id": "2026-10-14-melbourne-ffam-scholarship",
+      "school": "melbourne",
+      "kind": "scholarship",
+      "publishedAt": "",
+      "detectedAt": "2026-10-14",
+      "title": "Melbourne Fine Arts and Music 研究獎學金：每年 10/31 截止（經搜尋取得，請點來源連結人工確認）",
+      "summary": "學院獎學金頁寫明研究獎學金申請 10/31 截止，對應翌年初開始的獎學金（頁面未標年份）。另 Faculty of Arts 頁列國際生 8/15 截止，但那是不同學院，不適用。影響：若要 2028 年初開始並申請獎學金，需在 2027/10/31 前送件；2028 下半年開始是否有對應輪次仍待學院確認。（經搜尋取得，請點來源連結人工確認）",
+      "source": "https://finearts-music.unimelb.edu.au/study-with-us/scholarships"
+    },
+    {
+      "id": "2026-10-14-monash-r1-conflict",
+      "school": "monash",
+      "kind": "application",
+      "publishedAt": "",
+      "detectedAt": "2026-10-14",
+      "title": "Monash R1 截止日：校級頁與 MADA 頁不一致（經搜尋取得，請點來源連結人工確認）",
+      "summary": "校級 Monash Graduate Scholarship 頁列 R1 國際生 9/1 開放、2/28 截止，並註明 2027 年截止日已提前；MADA 學院頁則列 9/1–3/31，且沒有提前的註記。R1 對應當年 H2 入學，所以 2028 H2 的實際截止日要向 MADA 或研究生院書面確認，在確認之前請以較早的日期準備（2028/2/28 或更早）。（經搜尋取得，請點來源連結人工確認）",
+      "source": "https://www.monash.edu/mada/future-students/graduate-research/apply"
+    },
+    {
+      "id": "2026-10-14-rmit-art-ielts",
+      "school": "rmit",
+      "kind": "language",
+      "publishedAt": "",
+      "detectedAt": "2026-10-14",
+      "title": "RMIT PhD (Art) DR208 英文門檻確認：IELTS 6.5、每科 ≥ 6.0",
+      "summary": "DR208 課程頁列 IELTS Academic 6.5 overall、每科不低於 6.0，與 Design (DR235) 相同；也接受 TOEFL iBT 79、PTE 58、CAE 176。影響：你的 IELTS 準備目標（7.0、四科 ≥ 6.5）已高於 RMIT 兩個課程的門檻。",
+      "source": "https://www.rmit.edu.au/study-with-us/levels-of-study/research-programs/phd/phd-art-dr208"
+    },
+    {
+      "id": "2026-10-14-rmit-2027-round",
+      "school": "rmit",
+      "kind": "scholarship",
+      "publishedAt": "",
+      "detectedAt": "2026-10-14",
+      "title": "RMIT 2027 中央獎學金輪時程與新規定：EOI 須附教授支持聲明表",
+      "summary": "現行 2027 輪（2027 年 3 月入學）國際生：2026/6/1 開放 EOI、8/30 EOI 截止、9/30 完整申請截止、11/23 起發 offer。自 2026 年 6 月起，EOI 必須附 In-Principle Supervisor Supporting Statement 表。2028 輪期限尚未公告，請勿直接套用 2027 年日期；但可預期需在 2027 年年中前完成教授聯繫與支持聲明。另依獎學金條款，獎學金不能延到下一個曆年才開始。",
+      "source": "https://www.rmit.edu.au/research/research-degrees/how-to-apply"
+    },
+    {
+      "id": "2026-10-14-unsw-english-waiver",
+      "school": "unsw",
+      "kind": "application",
+      "publishedAt": "",
+      "detectedAt": "2026-10-14",
+      "title": "UNSW：申請英文豁免須提前 8 週送 EOI；學院國際生表列 2028 開始",
+      "summary": "學院總頁國際生獎學金表（2027 July Release）：EOI 2027/3/12、正式申請 2027/4/16、7/23 起發結果，開始時間列「2028」；申請英文豁免者須在 EOI 截止前 8 週送出（約 2027/1/15）。影響：如果 IELTS 在 2027 年 1 月前未達 7.0／每科 6.0，又打算申請豁免，就要提前在 1 月中送件。H2 開始仍建議向學院書面確認。",
+      "source": "https://www.unsw.edu.au/arts-design-architecture/study-with-us/postgraduate-research/how-to-apply"
+    },
+    {
+      "id": "2026-10-14-sydney-rtp-2028",
+      "school": "sydney",
+      "kind": "scholarship",
+      "publishedAt": "",
+      "detectedAt": "2026-10-14",
+      "title": "Sydney 公布 2028 國際生 RTP 獎學金時程：下半年入學預估 2027 年 12 月中截止",
+      "summary": "官方 RTP 國際生時程表：2028 Research Period 1/2 於 2027/9/10 截止、2027/11/16 起發結果；2028 Research Period 3/4（下半年）預估 2027 年 12 月中截止、2028 年 2 月中起發結果、3 月中定案（校方標示為估計）。影響：若以 2028 H2 入學並申請獎學金，送件時間應以 2027 年 12 月中為準，比網站原本記錄的 2028/3/31 入學規劃期限早約三個半月；3/31 只適用不申請獎學金的入學申請。建議把「Sydney：H2 入學申請規劃期限」任務提前到 2027 年 12 月初。",
+      "source": "https://www.sydney.edu.au/scholarships/australian-government-research-training-program/rtp-international.html"
+    }
+  ]
 }
