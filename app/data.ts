@@ -1,0 +1,70 @@
+import type { Task, Workspace } from "./model";
+export const homepages: Record<string,string> = {
+  melbourne:"https://www.unimelb.edu.au/", monash:"https://www.monash.edu/",
+  unsw:"https://www.unsw.edu.au/", rmit:"https://www.rmit.edu.au/",
+  sydney:"https://www.sydney.edu.au/", unisc:"https://www.unisc.edu.au/",
+};
+export const checkedOn = "2026-10-13";
+export const universities = [
+  { id:"melbourne", short:"Melbourne", name:"墨爾本大學", english:"The University of Melbourne", city:"Melbourne", initials:"M", color:"blue", course:"Doctor of Philosophy – Fine Arts and Music", unit:"Faculty of Fine Arts and Music · Visual Art / VCA", fit:"藝術實踐 · 身體感知 · 互動裝置", ielts:"完整分數待學院確認", intake:"彈性入學；學院分上、下半年評估。2028 截止日待確認。", defer:"博士課程與資助延期條件須向學院分別確認。", note:"勿套用 Faculty of Arts 的無年中入學規則。", url:"https://study.unimelb.edu.au/find/courses/graduate/doctor-of-philosophy-fine-arts-and-music", apply:"https://study.unimelb.edu.au/find/courses/graduate/doctor-of-philosophy-fine-arts-and-music/how-to-apply", language:"https://study.unimelb.edu.au/find/courses/graduate/doctor-of-philosophy-fine-arts-and-music/entry-requirements", source:"https://finearts-music.unimelb.edu.au/faqs/research-students" },
+  { id:"monash", short:"Monash", name:"蒙納許大學", english:"Monash University", city:"Melbourne", initials:"Mo", color:"teal", course:"Doctor of Philosophy – Art, Design and Architecture", unit:"Faculty of Art, Design and Architecture (MADA) · Fine Art / Design", fit:"創作研究 · 互動設計 · 跨域實踐", ielts:"6.5 overall · 每科 ≥ 6.0", intake:"現行 R3：5/4–8/31，對應翌年 H1；R1：9/1–翌年 2/28，對應當年 H2。2028 須重查。", defer:"依 offer 與資助條款確認；勿預設兩者可一起延期。", note:"MADA 與人文 Arts 學院的英文門檻不同。", url:"https://www.monash.edu/study/courses/find-a-course/art-design-and-architecture-1322", apply:"https://www.monash.edu/mada/research/graduate-research/apply", language:"https://www.monash.edu/graduate-research/study/apply/english-language-proficiency-requirements-for-admission", source:"https://www.monash.edu/graduate-research/study/apply" },
+  { id:"unsw", short:"UNSW", name:"新南威爾斯大學", english:"UNSW Sydney", city:"Sydney", initials:"U", color:"gold", course:"Doctor of Philosophy – Art, Design & Media (1292)", unit:"School of Art & Design · Faculty of Arts, Design & Architecture", fit:"新媒體 · 互動藝術 · 跨域創作", ielts:"7.0 overall · 每科 ≥ 6.0", intake:"2028 輪：EOI 2027/3/12、正式申請 2027/4/16、資助結果 7/23 起。", defer:"學校頁列 2028 T1/T2/T3，學院總頁仍列 T1；H2 與資助須書面確認。", note:"EOI 時須英文達標並有至少一位教授支持；正式申請需兩位合資格教授。", url:"https://www.unsw.edu.au/arts-design-architecture/our-schools/art-design/research/postgraduate-research", apply:"https://www.unsw.edu.au/arts-design-architecture/our-schools/art-design/research/postgraduate-research/how-to-apply", language:"https://www.unsw.edu.au/study/how-to-apply/english-language-requirements", source:"https://www.unsw.edu.au/arts-design-architecture/study-with-us/postgraduate-research/how-to-apply" },
+  { id:"rmit", short:"RMIT", name:"皇家墨爾本理工大學", english:"RMIT University", city:"Melbourne", initials:"R", color:"red", course:"PhD (Art) DR208 / PhD (Design) DR235", unit:"School of Art / School of Design", fit:"媒體藝術 · 空間裝置 · 設計研究", ielts:"Design：6.5 overall · 每科 ≥ 6.0；Art 另核對", intake:"連續入學，獎學金另有輪次。2028 國際生 EOI 與完整申請期限待公告。", defer:"須教授同意並由研究生院辦理；獎學金原則上不能跨下一曆年。", note:"Art 申請研究計畫 2–5 頁；先討論教授與共同指導。", url:"https://www.rmit.edu.au/study-with-us/levels-of-study/research-programs/phd/phd-art-dr208", apply:"https://www.rmit.edu.au/research/research-degrees/how-to-apply", language:"https://www.rmit.edu.au/study-with-us/levels-of-study/research-programs/phd/phd-design-dr235", source:"https://www.rmit.edu.au/research/research-degrees/terms-and-conditions" },
+  { id:"sydney", short:"Sydney", name:"雪梨大學", english:"The University of Sydney", city:"Sydney", initials:"S", color:"purple", course:"Doctor of Philosophy (Arts and Social Sciences)", unit:"School of Art, Communication and English · Sydney College of the Arts", fit:"藝術實踐 · 文學轉譯 · 觀眾經驗", ielts:"Arts & Social Sciences：6.5 overall · 每科 ≥ 6.0", intake:"現行：3/1 入學，前一年 9/30 截止；7/1 入學，同年 3/31 截止。資助期限另查。", defer:"可提出延期，可能最多一年、逐案審核；資助須另確認保留。", note:"設計備選：PhD (Architecture, Design and Planning) / Design Lab；IELTS 7.0，每科 ≥ 6.0。", url:"https://www.sydney.edu.au/courses/courses/pr/doctor-of-philosophy-arts-and-social-sciences0.html", apply:"https://www.sydney.edu.au/study/applying/how-to-apply/postgraduate-research.html", language:"https://www.sydney.edu.au/dam/corporate/documents/study/guides/usyd-international-guide.pdf", source:"https://www.sydney.edu.au/study/applying/accepting-your-offer/defer-your-offer.html" },
+  { id:"unisc", short:"UniSC", name:"陽光海岸大學", english:"University of the Sunshine Coast", city:"Queensland", initials:"SC", color:"green", course:"Doctor of Philosophy", unit:"Creative Arts 研究方向 · 具體指導單位待確認", fit:"條件式候選 · 創意藝術", ielts:"6.5 overall · 每科 ≥ 6.0", intake:"2028 日期待確認；先確認教授與互動藝術設備，再決定是否申請。", defer:"未確認適用延期上限，取得 offer 後另查。", note:"Creative Arts 申請須作品集，錄取取決於指導與設施可用性。", url:"https://www.unisc.edu.au/study/courses-and-programs/postgraduate-degrees/doctor-of-philosophy", apply:"https://www.unisc.edu.au/study/courses-and-programs/postgraduate-degrees/doctor-of-philosophy", language:"https://www.unisc.edu.au/study/how-to-apply/english-language-requirements", source:"https://www.unisc.edu.au/study/courses-and-programs/postgraduate-degrees/doctor-of-philosophy" },
+] as const;
+const rawTasks: Array<[string,string,Task["category"],string,Task["deadlineType"],string,Task["priority"]]> = [
+  ["申請大學與碩士英文學歷文件","北教大與北科大：成績單、學位證明、評分制度；整理碩論研究比重證據。","文件","2026-11-15","suggested","all","high"],
+  ["完成一頁研究方向摘要","交代研究問題、既有作品、博士延伸、方法與預期知識貢獻。","研究","2026-10-31","suggested","all","high"],
+  ["建立五校教授比較名單","每校先找 2–3 人，閱讀近期論文與作品，記錄契合理由。","教授","2026-11-30","suggested","all","high"],
+  ["完成 IELTS 四科診斷","考 IELTS Academic；準備目標總分 7.0、四科至少 6.5。確認舊托福日期。","英文","2026-10-31","suggested","all","high"],
+  ["整理《息／流》研究與作品紀錄","碩論摘要、方法、結果、系統架構、迭代、展場照片與影片。","作品集","2026-11-30","suggested","all","normal"],
+  ["建立英文 Academic CV","教育、研究、展覽、教學、技術與發表；分清已完成與進行中。","文件","2026-11-30","suggested","all","normal"],
+  ["取得兩位推薦人同意","碩論指導教授＋熟悉研究或創作能力的教師；提供 CV、摘要與時間表。","文件","2026-12-15","suggested","all","normal"],
+  ["整理核心文獻與研究缺口","累積 15–20 篇文獻筆記，收斂 2–3 個候選研究問題。","研究","2026-12-31","suggested","all","normal"],
+  ["寄出第一批個別化教授聯繫","附一頁摘要、CV 與作品連結，明確寫出 2028 H2 入學；此工作站只記錄聯繫。","教授","2026-12-31","suggested","all","high"],
+  ["完成研究計畫可審閱版本","準備藝術研究與設計研究版本；請教授給一次具體回饋。","研究","2027-02-15","suggested","all","high"],
+  ["參加 IELTS Academic 首考","為 UNSW 的 EOI 預留成績與必要重考時間。","英文","2027-02-01","suggested","all","high"],
+  ["確認 UNSW H2 資助適用性","官方學校與學院頁的入學學期不同步；取得書面確認。","資助","2027-01-31","suggested","unsw","high"],
+  ["UNSW：完整 EOI 截止","須英文達標、至少一位合資格教授支持，按學校規格備齊資料。","申請","2027-03-12","official","unsw","high"],
+  ["UNSW：正式申請截止","僅獲邀後送件，正式申請需兩位合資格教授同意參與指導。","申請","2027-04-16","official","unsw","high"],
+  ["完成楊牧詩互動作品的研究紀錄","整理文本與互動的關係、原型迭代、觀眾回饋及個人貢獻；保留授權證據。","作品集","2027-06-30","suggested","all","normal"],
+  ["完成英文作品集與短影片","建議先做 15–25 頁母版、3–5 件作品，再按各校規格縮編。","作品集","2027-06-30","suggested","all","high"],
+  ["必要時 IELTS 重考","逐校核對總分、單科、測驗形式、申請與入學效期。","英文","2027-06-15","suggested","all","normal"],
+  ["完成一篇英文可投稿稿件","碩論或新作品擇一，選合適研討會；投稿、接受、發表分別記錄。","發表","2027-08-31","suggested","all","normal"],
+  ["核對 116 年教育部公費簡章","依正式簡章確認學門、資格、語言、時程、材料與併領規則。","資助","","confirm","all","high"],
+  ["核對 Melbourne 2028 申請與資助期限","向 Fine Arts and Music 確認，勿套用其他學院日期。","申請","","confirm","melbourne","high"],
+  ["核對 RMIT 2028 國際生資助輪次","確認 EOI、正式申請期限與獎學金開始日期。","申請","","confirm","rmit","high"],
+  ["Monash：確認 2028 H2 R1 日期","現行規則以 2027/9 開始準備；截止日重查，勿直接沿用 2027 特別提前日期。","申請","2027-09-15","suggested","monash","high"],
+  ["Sydney：H2 入學申請規劃期限","現行 7/1 入學於同年 3/31 截止；2028 規則與更早的資助期限仍須確認。","申請","2028-03-31","confirm","sydney","high"],
+  ["比較 admission 與資助 offer","分開核對條件、接受期限、學費減免、生活津貼、補助年限與開始日期。","資助","2028-04-15","suggested","all","high"],
+  ["確認入學日、延期與語言效期","申請日優先填 H2；如延期，分別取得 admission 與 scholarship 的書面核准。","行政","2028-04-30","suggested","all","high"],
+  ["完成工作交接與家庭安排","向人事確認留職停薪程序；安排同行時間與家庭預算。","行政","2028-05-31","suggested","all","normal"],
+  ["完成 CoE、簽證與抵澳安排","依當時規定確認保險、簽證、住宿與交通；以正式入學文件為準。","行政","2028-06-30","suggested","all","normal"],
+];
+export const initialWorkspace: Workspace = {
+  goal:"H2", research:"創作實踐為核心的互動藝術研究：從《息／流》的身體與儀式經驗，延伸至文學意象、互動行為與觀眾的詩性感知。\n\n待收斂：博士研究新增什麼問題、方法與知識貢獻？",
+  tasks:rawTasks.map((t,i)=>({id:`task-${i+1}`, title:t[0], description:t[1], category:t[2], due:t[3], deadlineType:t[4], school:t[5], priority:t[6], done:false})),
+  contacts:[], schools:Object.fromEntries(universities.map(s=>[s.id,{status:"評估中",selected:s.id!=="unisc",route:s.course,deadline:"",notes:""}])),
+  materials:[
+    {id:"proposal",title:"研究計畫",hint:"一頁摘要＋完整英文母版；寫清研究缺口、問題、方法、倫理、可行性與 3–4 年進度。"},
+    {id:"portfolio",title:"作品集與影片",hint:"《息／流》為主案例；加入文學互動作品。每件呈現研究脈絡、迭代、發現與個人貢獻。"},
+    {id:"cv",title:"Academic CV",hint:"建議先做 2–3 頁英文版；分清已完成、進行中、已投稿。"},
+    {id:"transcript",title:"學位與成績單",hint:"北教大與北科大英文資料、評分制度、碩論研究比重。"},
+    {id:"reference",title:"推薦資料",hint:"至少兩位候選人同意；按各校報告或推薦信流程提交。"},
+    {id:"language",title:"語言成績",hint:"IELTS Academic；總分、單科、效期與官方送分逐項核對。"},
+    {id:"writing",title:"英文寫作與發表",hint:"碩論摘要、章節或英文稿；作品與論文的研究貢獻保持一致。"},
+    {id:"funding",title:"資助與公費材料",hint:"入學與資助分開追蹤。依正式公費簡章核對，不假設可併領。"},
+  ].map(m=>({...m,status:"待準備",link:"",notes:""})),
+  ielts:{date:"",overall:"",listening:"",reading:"",writing:"",speaking:""},
+};
+export const timeline = [
+  {period:"2026 OCT—NOV",title:"建立申請基礎",desc:"一頁研究摘要、英文學歷文件、IELTS 診斷與教授初選。",range:"2026 年 10–11 月",stage:"研究與定位"},
+  {period:"2026 DEC",title:"讓研究被看見",desc:"完成 CV、作品集骨架，取得推薦人同意，開始教授聯繫。",range:"2026 年 12 月",stage:"教授與材料"},
+  {period:"2027 JAN—APR",title:"完成第一輪申請包",desc:"IELTS 首考與計畫審閱；UNSW EOI 3/12、獲邀後正式申請 4/16。",range:"2027 年 1–4 月",stage:"早輪申請"},
+  {period:"2027 MAY—AUG",title:"補強作品與研究證據",desc:"作品集定稿、英文補考、完成可投稿稿件；逐校確認 2028 資助輪次。",range:"2027 年 5–8 月",stage:"成果累積"},
+  {period:"2027 SEP—DEC",title:"依入學方案送件",desc:"H2：準備 Monash R1；H1：注意 Sydney 9/30 現行期限。Melbourne 與 RMIT 按實際輪次。",range:"2027 年 9–12 月",stage:"正式申請"},
+  {period:"2028 JAN—MAR",title:"追蹤 offer 與資助",desc:"H2 剩餘申請，Sydney 3/31 現行規劃期限；分開記錄 admission 與 scholarship。",range:"2028 年 1–3 月",stage:"結果與選擇"},
+  {period:"2028 APR—JUN",title:"確認出國準備",desc:"確認開始日期與資金、工作交接、CoE、簽證、住宿與家庭安排。",range:"2028 年 4–6 月",stage:"入學行政"},
+  {period:"2028 JUL—DEC",title:"開始博士研究",desc:"依正式 offer 日期入學；與教授訂定前三個月研究、會議與設備需求。",range:"2028 年 7–12 月",stage:"研究啟程"},
+];
