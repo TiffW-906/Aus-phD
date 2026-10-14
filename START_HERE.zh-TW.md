@@ -1,63 +1,86 @@
-# 2028 澳洲博士申請管理 — 完整程式碼
+# 2028 澳洲博士申請管理 — 自架版
 
-這是目前已發布工作站的原始碼快照，包含字體放大版、官方公告更新，以及 The Nature of Code 的 16 週閱讀計畫。
-
-網站：https://au-phd-2028-workspace.tiffw.chatgpt.site
-來源版本：2b8b193aea01efb7c3076aedfcbf528ef2949dbf
-整理日期：2026-10-14
-
-## 內容與技術
+原本在 ChatGPT Sites 上的工作站，搬到你自己的 Cloudflare 帳號。架構不變：
 
 - React + TypeScript + Vinext / Vite
-- CSS / Tailwind CSS；繁體中文與響應式排版
-- Cloudflare Workers 後端、D1 / SQLite 資料庫
-- ChatGPT / Sites 私人登入與使用者資料隔離
-- 任務清單、學校資料、教授聯繫、研究材料、IELTS 記錄與 JSON / CSV 匯出
-- 官方公告獨立儲存、版本衝突保護、每週更新流程
-- 16 週 The Nature of Code 閱讀與 p5.js 實作計畫
+- Cloudflare Workers 後端、D1 / SQLite 資料庫（同樣的兩份遷移）
+- 登入：**Cloudflare Access** 取代 ChatGPT 登入。只有你允許的 Email 能進入，Worker 會再驗證 Access 簽章（`app/access.ts`）。
+- GitHub Actions：推送到 `main` 會自動檢查、建置、套用資料庫遷移並部署。
 
-## 主要檔案
+## 這一版新增的功能
 
-| 檔案 | 用途 |
+- 匯入 JSON：可還原「匯出進度」的檔案。
+- 刪除任務與教授紀錄。閱讀計畫的 16 週任務請在「閱讀與實作」頁管理。
+- 兩個分頁同時編輯時，可選「載入最新版本」或「保留本頁修改」，不會卡在無法儲存。
+- 「關鍵申請節點」加入你在學校頁填的截止日、倒數天數，以及「日期待確認」的項目。
+- 清單預設隱藏閱讀計畫（可勾選顯示），新增「已逾期」篩選；首頁另外顯示本週閱讀。
+- 右上角新增登出按鈕。
+
+## 第一次部署（約 20–30 分鐘，只需做一次）
+
+### 1. Cloudflare 帳號與資料庫
+1. 到 https://dash.cloudflare.com 註冊免費帳號。
+2. 左側選單 **Storage & Databases → D1 SQL Database → Create**，名稱填 `au-phd-2028`。
+3. 建好後複製 **Database ID**。
+4. 在 **Workers & Pages** 頁面右側找到並複製 **Account ID**。
+
+### 2. 建立 API Token
+1. 右上角頭像 → **My Profile → API Tokens → Create Token**。
+2. 選範本 **Edit Cloudflare Workers**，再按 **+ Add more** 加一條權限：**Account → D1 → Edit**。
+3. 建立後複製 Token。這組只會顯示一次，請勿貼到任何公開地方。
+
+### 3. 把設定填進 GitHub
+到 GitHub repo → **Settings → Secrets and variables → Actions**：
+
+| 種類 | 名稱 | 值 |
+| --- | --- | --- |
+| Secrets | `CLOUDFLARE_API_TOKEN` | 步驟 2 的 Token |
+| Secrets | `CLOUDFLARE_ACCOUNT_ID` | 步驟 1 的 Account ID |
+| Variables | `D1_DATABASE_ID` | 步驟 1 的 Database ID |
+| Variables | `OWNER_EMAILS` | 你的 Email（多個用逗號分隔） |
+
+### 4. 第一次部署
+把程式合併到 `main`（或到 **Actions → Check and deploy → Run workflow**）。完成後網址是：
+`https://au-phd-2028.<你的子網域>.workers.dev`
+
+此時網頁會顯示「工作站尚未載入」，這是正常的：還沒設定登入，資料一律拒絕讀取。
+
+### 5. 開啟 Cloudflare Access（登入保護）
+1. **Workers & Pages → au-phd-2028 → Settings → Domains & Routes**，在 `workers.dev` 那一列開啟 **Cloudflare Access**。第一次使用會請你建立 Zero Trust 團隊名稱，並選擇 **Free** 方案。
+2. 到 **Zero Trust → Access → Applications**，編輯剛產生的應用程式：Policy 設為 **Allow**，條件 **Emails** 只填你的 Email。
+3. 在應用程式的 Overview 複製 **Application Audience (AUD) Tag**。
+4. 團隊網域在 **Zero Trust → Settings** 可以看到，格式是 `你的團隊名稱.cloudflareaccess.com`。
+
+### 6. 填入 Access 設定並重新部署
+GitHub **Variables** 再加兩個：
+
+| 名稱 | 值 |
 | --- | --- |
-| app/dashboard.tsx | 儀表板、導覽、頁面、表單、進度儲存與匯出 |
-| app/globals.css | 完整視覺樣式與手機排版 |
-| app/data.ts | 學校官方連結、博士申請任務與時間線 |
-| app/reading.ts | 閱讀週任務與保留既有進度的合併邏輯 |
-| app/model.ts | 私人工作站資料格式與驗證 |
-| app/official.ts | 官方公告格式、校方來源驗證與資訊合併 |
-| app/api/workspace/route.ts | 個人進度讀取與儲存 API |
-| app/api/official/route.ts | 私人站台的官方公告背景更新 API |
-| app/chatgpt-auth.ts | Sites / ChatGPT 身分與登入 |
-| db/schema.ts | 資料庫資料表定義 |
-| drizzle/ | SQL 遷移與 Drizzle 結構記錄 |
-| scripts/test-workspace.mjs | 資料儲存、使用者隔離、版本衝突與閱讀計畫測試 |
-| scripts/official-sync.py | 官方公告背景讀寫輔助工具 |
-| .openai/weekly-updates.md | 每週查核與通知流程 |
-| .openai/hosting.json | 原工作站的部署識別與資料庫綁定 |
-| package.json / pnpm-lock.yaml | 依賴、版本與執行指令 |
-| vite.config.ts / build/ | Vinext、Workers 與 Sites 整合 |
+| `ACCESS_TEAM_DOMAIN` | `你的團隊名稱.cloudflareaccess.com` |
+| `ACCESS_AUD` | 步驟 5 的 AUD Tag |
 
-## 本機安裝與執行
+到 **Actions → Check and deploy → Run workflow** 重新部署。打開網址後，Cloudflare 會寄驗證碼到你的 Email，登入後就能使用。
 
-建議使用 Node.js 24 與 pnpm 11.25.0。解壓縮後，於 au-phd-2028 資料夾開啟終端機。
+## 之後怎麼更新
+- 修改程式後推送到 `main`，GitHub Actions 會自動檢查並部署。
+- 定期按「匯出進度」備份。
+
+## 和原版的差異
+- ChatGPT 每週自動查核官方公告的排程沒有搬過來（那是 ChatGPT 帳號內的自動化）。官方公告 API（`/api/official`）仍在，現在只有登入的擁有者能讀寫；之後可以另外設定自動查核。
+- 原版的 `.openai/`、`scripts/official-sync.py` 與 `SOURCE_MANIFEST.json` 只適用於 ChatGPT Sites，已移除；需要時可從 git 歷史找回。
+
+## 本機開發
+建議使用 Node.js 22 以上與 pnpm 11.25.0。
 
 ```bash
 corepack enable
-corepack prepare pnpm@11.25.0 --activate
 pnpm install --frozen-lockfile
 pnpm run build
-```
-
-首次使用本機 D1 時，先依序套用兩份遷移；這只建立本機資料庫，不會變更線上資料：
-
-```bash
-node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0000_legal_ma_gnuci.sql
-node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 execute DB --local --config dist/server/wrangler.json --persist-to .wrangler/state --file drizzle/0001_remarkable_bruce_banner.sql
+node --import ./scripts/sites-env.mjs ./node_modules/wrangler/bin/wrangler.js d1 migrations apply DB --local --config dist/server/wrangler.json --persist-to .wrangler/state
 pnpm run dev
 ```
 
-開啟終端機顯示的本機網址（通常 http://localhost:5173）。本機 portable 模式可使用 `/signin-with-chatgpt?return_to=/` 建立測試登入；不代表連接了真實 ChatGPT 帳戶，也不會取得線上私人進度。
+開發模式（http://localhost:5173）不經過 Cloudflare Access，會用固定的本機測試帳號。
 
 檢查程式：
 
@@ -65,14 +88,3 @@ pnpm run dev
 pnpm exec tsc --noEmit
 node scripts/test-workspace.mjs
 ```
-
-## 部署與資料注意事項
-
-1. 這是完整的前後端專案，不是單一 HTML。登入、進度儲存與背景更新需要對應的執行環境。
-2. .openai/hosting.json 保留原工作站的 project_id，並非存取密鑰。若要建立另一個獨立站台，必須由 Sites 建立新專案並換成新識別碼；不要直接部署覆蓋原站台。
-3. 正式站台的 owner-private 存取規則保護 /api/official。若移至其他平台或改為公開網站，需要先為公告寫入介面加上等效授權。
-4. 每週排程是 ChatGPT 中的外部自動化，不會因下載原始碼自動搬移或啟用。壓縮檔包含更新程式與流程，不含排程服務帳戶或憑證。
-5. 不包含私人資料庫記錄、勾選進度、教授筆記、帳號憑證、node_modules、建置輸出及執行快取。依賴由 pnpm 安裝；私人進度可另由工作站「匯出進度」取得。
-6. 壓縮檔中的 SOURCE_MANIFEST.json 列出每個檔案的 SHA-256，可用於檢查原始碼快照。
-
-完整保留第三方整合程式與授權檔案。原始英文 README.md 另提供框架與 D1 操作說明。

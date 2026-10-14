@@ -1,5 +1,5 @@
 import { env } from "cloudflare:workers";
-import { getChatGPTUser } from "../../chatgpt-auth";
+import { getUser } from "../../auth";
 import { initialWorkspace } from "../../data";
 import { mergeReadingPlan } from "../../reading";
 import { workspaceSchema } from "../../model";
@@ -7,8 +7,8 @@ import { z } from "zod";
 export const dynamic = "force-dynamic";
 function json(data: unknown, status=200) { return Response.json(data,{status,headers:{"Cache-Control":"no-store"}}); }
 export async function GET() {
-  const user=await getChatGPTUser();
-  if(!user) return json({error:"請登入 ChatGPT 後開啟工作站。"},401);
+  const user=await getUser();
+  if(!user) return json({error:"請重新登入後開啟工作站。"},401);
   if(!env.DB) return json({error:"目前無法讀取工作站，請稍後重試。"},503);
   try {
     const row=await env.DB.prepare("SELECT data, revision, updated_at FROM application_workspaces WHERE user_id = ?").bind(user.userId).first<{data:string;revision:number;updated_at:string}>();
@@ -16,7 +16,7 @@ export async function GET() {
   } catch { return json({error:"讀取失敗，請重新整理。"},503); }
 }
 export async function PUT(request: Request) {
-  const user=await getChatGPTUser();
+  const user=await getUser();
   if(!user) return json({error:"登入狀態已變更，請重新登入。"},401);
   const origin=request.headers.get("origin");
   if(origin && origin!==new URL(request.url).origin) return json({error:"請從工作站儲存。"},403);

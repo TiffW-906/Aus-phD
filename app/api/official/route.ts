@@ -2,19 +2,22 @@ import { env } from "cloudflare:workers";
 import { z } from "zod";
 import { initialOfficial, officialSchema, effectiveSchools } from "../../official";
 import { homepages } from "../../data";
+import { getUser } from "../../auth";
 export const dynamic="force-dynamic";
-// This shared, non-personal endpoint is protected by the Site's owner-private
-// dispatch policy. Unattended callers use freshly acquired Sites service access.
+// Shared school metadata and announcements. Only signed-in owners (verified via
+// Cloudflare Access) can read or change it; personal progress lives elsewhere.
 const json=(data:unknown,status=200)=>Response.json(data,{status,headers:{"Cache-Control":"no-store"}});
 export async function GET(){
+  if(!await getUser())return json({error:"請重新登入。"},401);
   if(!env.DB)return json({error:"公告資料暫時無法讀取。"},503);
   try{
     const row=await env.DB.prepare("SELECT data, revision FROM official_updates WHERE id = ?").bind("official").first<{data:string;revision:number}>();
     const data=row?officialSchema.parse(JSON.parse(row.data)):initialOfficial;
-    return json({data,revision:row?.revision??0,effectiveSchools:effectiveSchools(data),homepages,updateInstructions:"Use .openai/weekly-updates.md from the linked Site source. PUT {revision,data} to this endpoint using fresh owner-private Sites service access. Only official metadata and announcement records are writable; personal progress is stored separately."});
+    return json({data,revision:row?.revision??0,effectiveSchools:effectiveSchools(data),homepages,updateInstructions:"PUT {revision,data} to this endpoint as a signed-in owner. Only official metadata and announcement records are writable; personal progress is stored separately."});
   }catch{return json({error:"公告讀取失敗，請稍後重試。"},503);}
 }
 export async function PUT(request:Request){
+  if(!await getUser())return json({error:"Sign-in required"},401);
   const origin=request.headers.get("origin");
   if(origin&&origin!==new URL(request.url).origin)return json({error:"Invalid origin"},403);
   if(!env.DB)return json({error:"公告資料暫時無法儲存。"},503);

@@ -15,7 +15,7 @@ function load(file){
   const module={exports:{}};
   const customRequire=(name)=>{
     if(name==='cloudflare:workers')return {env};
-    if(name==='../../chatgpt-auth')return {getChatGPTUser:async()=>user};
+    if(name==='../../auth')return {getUser:async()=>user};
     if(name==='../../data'||name==='./data')return load('app/data.ts');
     if(name==='../../official')return load('app/official.ts');
     if(name==='../../reading')return load('app/reading.ts');
@@ -66,6 +66,10 @@ user=null;
 assert.equal((await GET()).status,401);assert.equal((await PUT(request(2))).status,401);
 console.log('PASS unauthenticated reads and writes are rejected');
 const {GET:OfficialGET,PUT:OfficialPUT}=load('app/api/official/route.ts');
+assert.equal((await OfficialGET()).status,401);
+assert.equal((await OfficialPUT(new Request('https://workspace.test/api/official',{method:'PUT',body:'{}'}))).status,401);
+console.log('PASS official announcements require a signed-in owner');
+user={userId:'user-a'};
 const officialBase=await (await OfficialGET()).json();assert.equal(officialBase.revision,0);
 const officialData=structuredClone(officialBase.data);officialData.checkedAt='2026-10-13T03:00:00.000Z';
 officialData.schools.unsw={intake:'Verified test update'};
@@ -75,7 +79,6 @@ const readOfficial=await (await OfficialGET()).json();assert.equal(readOfficial.
 assert.equal((await OfficialPUT(officialRequest(0,officialData))).status,409);
 const badOfficial=structuredClone(officialData);badOfficial.schools.unsw.source='https://untrusted.example/';
 assert.equal((await OfficialPUT(officialRequest(1,badOfficial))).status,400);
-user={userId:'user-a'};
 const personalAfterOfficial=await (await GET()).json();assert.equal(personalAfterOfficial.revision,2);assert.equal(personalAfterOfficial.data.contacts.length,1);assert.equal(personalAfterOfficial.data.tasks[0].done,true);
 console.log('PASS unattended official changes persist without touching personal progress');
 console.log('PASS official updates reject stale writes and non-university sources');
@@ -89,4 +92,37 @@ assert.equal(kept.due,'2027-05-01');assert.equal(kept.description,'Personal read
 assert.deepEqual(mergeReadingPlan(merged),merged);
 assert.equal(readingTasks[15].due,'2027-02-07');
 console.log('PASS requested reading plan is added once and preserves custom dates and completion');
+
+// Cloudflare Access JWT verification
+const {verifyAccessJwt,parseOwners,normalizeTeamDomain}=load('app/access.ts');
+const {subtle}=globalThis.crypto;
+const pair=await subtle.generateKey({name:'RSASSA-PKCS1-v1_5',modulusLength:2048,publicExponent:new Uint8Array([1,0,1]),hash:'SHA-256'},true,['sign','verify']);
+const jwk={...await subtle.exportKey('jwk',pair.publicKey),kid:'k1'};
+const b64=v=>Buffer.from(v).toString('base64url');
+const team='team.cloudflareaccess.com',aud='aud-tag',now=Date.parse('2026-10-14T00:00:00Z'),sec=Math.floor(now/1000);
+async function sign(payload,{kid='k1',key=pair.privateKey}={}){
+  const head=b64(JSON.stringify({alg:'RS256',kid,typ:'JWT'})),body=b64(JSON.stringify(payload));
+  const sig=await subtle.sign('RSASSA-PKCS1-v1_5',key,new TextEncoder().encode(`${head}.${body}`));
+  return `${head}.${body}.${b64(new Uint8Array(sig))}`;
+}
+const claims={aud:[aud],iss:`https://${team}`,sub:'sub-123',email:'Owner@Example.com',exp:sec+600,iat:sec};
+let certCalls=0;const fetchCerts=async()=>{certCalls++;return {keys:[jwk]};};
+const cfg={teamDomain:team,aud,owners:parseOwners('owner@example.com, second@example.com')};
+const verify=(token,config=cfg)=>verifyAccessJwt(token,config,{fetchCerts,now});
+assert.deepEqual(await verify(await sign(claims)),{userId:'sub-123',email:'owner@example.com'});
+assert.equal(await verify(await sign({...claims,aud:['other']})),null);
+assert.equal(await verify(await sign({...claims,iss:'https://evil.cloudflareaccess.com'})),null);
+assert.equal(await verify(await sign({...claims,exp:sec-1})),null);
+assert.equal(await verify(await sign({...claims,email:'stranger@example.com'})),null);
+assert.deepEqual(await verify(await sign({...claims,email:'stranger@example.com'}),{...cfg,owners:[]}),{userId:'sub-123',email:'stranger@example.com'});
+const other=await subtle.generateKey({name:'RSASSA-PKCS1-v1_5',modulusLength:2048,publicExponent:new Uint8Array([1,0,1]),hash:'SHA-256'},true,['sign','verify']);
+assert.equal(await verify(await sign(claims,{key:other.privateKey})),null);
+assert.equal(await verify(await sign(claims,{kid:'unknown'})),null);
+const good=await sign(claims);const [h]=good.split('.');
+assert.equal(await verify(`${h}.${b64(JSON.stringify({...claims,email:'second@example.com'}))}.${good.split('.')[2]}`),null);
+assert.equal(await verify(null),null);assert.equal(await verify('not-a-jwt'),null);
+assert.equal(await verify(good,{...cfg,aud:''}),null);
+assert.equal(normalizeTeamDomain('https://Team.cloudflareaccess.com/'),team);
+assert.ok(certCalls>=1);
+console.log('PASS Cloudflare Access tokens are verified for signature, audience, issuer, expiry and owner email');
 db.close();

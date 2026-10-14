@@ -1,28 +1,32 @@
 import vinext from "vinext";
 import { defineConfig } from "vite";
-import hostingConfig from "./.openai/hosting.json";
+import { fileURLToPath } from "node:url";
 import { readExecutionProfile } from "./scripts/execution-profile.mjs";
-import { sites } from "./build/sites-vite-plugin";
 import { connectorPreview } from "./build/connector-preview-plugin.mjs";
 
-const SITE_CREATOR_PLACEHOLDER_DATABASE_ID =
-  "00000000-0000-4000-8000-000000000000";
-
-const { d1, r2 } = hostingConfig;
+// Local dev uses this placeholder; deploys pass the real D1 database ID in
+// D1_DATABASE_ID (see START_HERE.zh-TW.md and .github/workflows/deploy.yml).
+const PLACEHOLDER_DATABASE_ID = "00000000-0000-4000-8000-000000000000";
+const WORKER_NAME = process.env.WORKER_NAME || "au-phd-2028";
+const DATABASE_NAME = process.env.D1_DATABASE_NAME || "au-phd-2028";
+const d1 = "DB";
+const r2: string | null = null;
 
 // macOS Seatbelt blocks FSEvents, so Codex previews need polling for HMR.
 const isCodexSeatbeltSandbox = process.env.CODEX_SANDBOX === "seatbelt";
 const managedLinux = readExecutionProfile() === "managed-linux";
 
 const localBindingConfig = {
+  name: WORKER_NAME,
   main: "./build/sites-worker.ts",
   compatibility_flags: ["nodejs_compat"],
   d1_databases: d1
     ? [
         {
           binding: d1,
-          database_name: "site-creator-d1",
-          database_id: SITE_CREATOR_PLACEHOLDER_DATABASE_ID,
+          database_name: DATABASE_NAME,
+          database_id: process.env.D1_DATABASE_ID || PLACEHOLDER_DATABASE_ID,
+          migrations_dir: fileURLToPath(new URL("./drizzle", import.meta.url)),
         },
       ]
     : [],
@@ -34,6 +38,13 @@ const localBindingConfig = {
         },
       ]
     : [],
+  // Cloudflare Access settings baked into the deployed Worker. Empty values make
+  // every production request fail closed (401) until they are configured.
+  vars: {
+    ACCESS_TEAM_DOMAIN: process.env.ACCESS_TEAM_DOMAIN ?? "",
+    ACCESS_AUD: process.env.ACCESS_AUD ?? "",
+    OWNER_EMAILS: process.env.OWNER_EMAILS ?? "",
+  },
 };
 
 export default defineConfig(async ({ command }) => {
@@ -62,7 +73,6 @@ export default defineConfig(async ({ command }) => {
     },
     plugins: [
       vinext(),
-      sites({ mockAuth: !managedLinux }),
       connectorPreview(),
       cloudflare({
         viteEnvironment: { name: "rsc", childEnvironments: ["ssr"] },

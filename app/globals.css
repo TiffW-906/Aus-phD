@@ -20,3 +20,22 @@
 @media(max-width:460px){.school-mini-grid{grid-template-columns:repeat(3,minmax(0,1fr));gap:18px 8px}.school-mini-grid>button{border:0}.hero{grid-template-columns:1fr}.hero-content{padding:25px}.hero-goal{border-left:0;border-top:1px solid #dfe0d2;margin:0 25px 25px;padding:20px 0 0;align-items:flex-start}.hero h2{font-size:32px}.goal-toggle{width:200px;max-width:100%}.hero-goal>strong{font-size:32px}.hero-goal>small{font-size:12px}.hero-content p{font-size:13px}.hero-link{font-size:12px}.task-row{align-items:flex-start;flex-wrap:wrap;column-gap:10px;row-gap:6px}.task-row .check-box{margin-top:5px}.task-main{flex-basis:calc(100% - 30px)}.task-end{margin-left:30px;flex-direction:row;align-items:center;gap:10px}.task-list-heading{flex-wrap:wrap;gap:10px}.filter-bar .segmented{flex-basis:100%}.filter-bar select{flex:1;max-width:none}.timeline-row{grid-template-columns:85px 15px 1fr}.timeline-panel{padding-left:16px;padding-right:16px}.progress-strip>.button{margin-left:0}.error-banner .button{margin-left:0}.directory-links{gap:12px 16px}.toast{white-space:normal;min-width:200px}.form-grid{grid-template-columns:1fr}.sidebar nav button{font-size:15px}}
 
 .reading-summary{padding:28px;display:grid;grid-template-columns:1fr 170px;gap:30px;margin-bottom:23px}.reading-summary h2{font-size:23px;font-weight:550;margin:9px 0 12px}.reading-summary p{font-size:14px;color:#8a977d;line-height:1.95;margin-top:9px}.reading-progress{display:flex;flex-direction:column;justify-content:center}.reading-progress strong{font-size:35px;font-family:Georgia,serif;font-weight:400}.reading-progress strong span{font-size:15px;font-family:var(--font-sans);color:#9ba68b}.reading-progress p{font-size:12px}.reading-progress .progress-wide{flex:none;margin-top:15px}.reading-weeks{display:grid;grid-template-columns:1fr 1fr;gap:20px}.reading-week{padding:25px}.reading-week-head{display:flex;gap:11px;align-items:center;flex-wrap:wrap;margin-bottom:17px}.reading-number{font-family:Georgia,serif;font-size:19px;color:#8fa07f}.reading-week-head time{font-size:12px;color:#a1ad91;margin-left:auto}.reading-week h3{font-size:18px;font-weight:550;margin-bottom:10px}.reading-week>p{font-size:14px;line-height:1.95;color:#8e9d7e}.reading-week-actions{display:flex;align-items:center;gap:17px;flex-wrap:wrap;border-top:1px solid var(--line);padding-top:18px;margin-top:19px}.reading-week-actions>.button{margin-left:auto}.reading-week-actions .external,.reading-week-actions .text-link{font-size:12px}.reading-done{background:#f6f9f1}.reading-done h3{color:#93a483}@media(max-width:1030px){.reading-weeks{grid-template-columns:1fr}.reading-summary{grid-template-columns:1fr 120px}}@media(max-width:760px){.reading-summary{padding:23px;grid-template-columns:1fr;gap:18px}.reading-summary h2{font-size:21px}.reading-progress{max-width:220px}.reading-week{padding:22px}.reading-week-head time{margin-left:0;width:100%}.reading-week-actions{gap:12px}.reading-week-actions>.button{margin-left:0}}
+
+/* Countdown, key-date, import/delete and conflict additions */
+.countdown{display:block;font-size:12px;color:#8d9483;margin-top:2px}
+.overdue .countdown{color:var(--clay)}
+.deadline-meta{display:flex;align-items:center;gap:8px;flex-wrap:wrap}
+.deadline-meta .badge{margin-top:5px}
+.deadline-meta .countdown{margin-top:5px}
+.undated{padding:14px 0 4px;border-bottom:1px solid #eef0e6}
+.undated .eyebrow{font-size:12px;color:var(--gold);margin-bottom:6px}
+.undated-item{display:flex;align-items:flex-start;gap:7px;width:100%;text-align:left;font-size:13px;line-height:1.6;padding:4px 0;color:#6f7768}
+.undated-item svg{flex:none;margin-top:4px;color:var(--gold)}
+.reading-next{display:flex;align-items:center;gap:9px;width:100%;margin-top:12px;padding:11px 13px;border-radius:7px;background:var(--sage);color:var(--green);font-size:14px;text-align:left}
+.reading-next span{flex:1;min-width:0}
+.reading-next small{font-size:12px;color:#7b8077;white-space:nowrap}
+.button.danger{background:#fff2eb;color:#a75e43;border:1px solid #e7c7b7;margin-right:auto}
+.button.danger:hover{background:#fbe5da}
+.banner-actions{display:flex;gap:8px;flex-wrap:wrap}
+.filter-bar .reading-toggle{margin:0;white-space:nowrap;color:#6f7768}
+@media(max-width:760px){.top-actions .button span{display:none}.error-banner{flex-wrap:wrap}}

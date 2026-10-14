@@ -32,4 +32,9 @@ export function progress(items: { done: boolean }[]) {
 }
 export function dateLabel(date: string) { return date ? date.replaceAll("-", "/") : "日期待確認"; }
 export function today() { return new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Taipei", year: "numeric", month: "2-digit", day: "2-digit" }).format(new Date()); }
+// Whole days from today (Asia/Taipei) to a YYYY-MM-DD date; negative when past, null when unset.
+export function daysUntil(date: string, from = today()) {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(date)) return null;
+  return Math.round((Date.parse(`${date}T00:00:00Z`) - Date.parse(`${from}T00:00:00Z`)) / 86400000);
+}
 export function safeLink(link: string) { try { const u = new URL(link); return ["http:", "https:"].includes(u.protocol) ? u.href : undefined; } catch { return undefined; } }
