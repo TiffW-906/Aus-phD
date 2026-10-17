@@ -1,15 +1,31 @@
 {
-  "name": "wud-dessert-shop",
+  "name": "wud-dessert",
   "private": true,
   "type": "module",
   "scripts": {
-    "dev": "wrangler dev",
-    "db:migrate:local": "wrangler d1 migrations apply DB --local",
-    "db:migrate": "wrangler d1 migrations apply DB --remote",
-    "deploy": "wrangler deploy",
-    "test": "node --test test/*.test.js"
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "seed:sql": "node scripts/products-to-sql.mjs > supabase/seed.sql"
+  },
+  "dependencies": {
+    "@supabase/ssr": "0.12.7",
+    "@supabase/supabase-js": "2.118.0",
+    "next": "16.3.4",
+    "react": "19.2.6",
+    "react-dom": "19.2.6",
+    "server-only": "0.0.1"
   },
   "devDependencies": {
-    "wrangler": "4.92.0"
+    "@tailwindcss/postcss": "4.2.1",
+    "@types/node": "22.19.19",
+    "@types/react": "19.2.14",
+    "@types/react-dom": "19.2.3",
+    "supabase": "2.121.0",
+    "tailwindcss": "4.2.1",
+    "typescript": "5.9.3",
+    "vitest": "4.0.18"
   }
 }

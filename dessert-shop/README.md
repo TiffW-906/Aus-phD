@@ -1,54 +1,65 @@
 # Wu.D dessert 線上訂購網站
 
-客人瀏覽菜單 → 選口味、加入購物車 → 填資料結帳（LINE Pay／自取現金）→ 訂單存進資料庫，
-賣家在 `/admin.html` 後台核對、改狀態、填運費、匯出 Excel（CSV）、看備料統計。
+規格見 [CLAUDE.md](CLAUDE.md)。技術：Next.js（App Router）＋ Supabase ＋ LINE Pay v3 ＋ Vercel ＋ Tailwind CSS。
 
-和本 repo 其他部分（PhD 申請追蹤器）完全獨立，部署成另一個 Cloudflare Worker。
+## 頁面
 
-## 檔案說明
-
-| 檔案 | 用途 |
+| 網址 | 用途 |
 | --- | --- |
-| `public/menu.json` | **菜單、價格、口味、店家資訊**。改價格或新增商品只要改這個檔案 |
-| `public/images/` | 商品照片（見資料夾內說明） |
-| `public/index.html`, `app.js`, `style.css` | 客人下單頁 |
-| `public/admin.html`, `admin.js`, `admin.css` | 賣家後台 |
-| `src/worker.js` | API：建立訂單、後台查詢／更新 |
-| `src/orders.js` | 訂單檢查（價格一律以 menu.json 為準，客人無法竄改） |
-| `migrations/` | D1 資料庫結構 |
+| `/` | 商品頁：今日現貨區塊＋分類商品、購物車抽屜 |
+| `/checkout` | 結帳：取貨日曆、30 分鐘時段、LINE Pay／現場付現 |
+| `/order/[訂單編號]` | 訂單完成頁 |
+| `/admin` | 今日總覽（新訂單即時出現、提示音、分頁標題顯示未讀數） |
+| `/admin/products` | 商品狀態：現貨／可預訂／暫停、剩餘數量、預訂天數、換照片 |
+| `/admin/orders` | 訂單列表（手機卡片／電腦表格、篩選、CSV 備份） |
+| `/admin/settings` | 公休日月曆、營業取貨日與時間 |
 
-## 付款流程
+## 重要檔案
 
-- **LINE Pay**：客人送出訂單後，頁面會請客人加入官方 LINE `@327uqhcn` 並傳送訂單編號；
-  賣家回覆 LINE Pay 付款連結，收款後在後台把狀態改成「已付款」。
-  （若之後申請到 LINE Pay 商店帳號，可以再串接官方 API 自動付款。）
-- **現金**：只有選「工作室自取」時可以選。
-- 7-11 店到店／黑貓宅配的運費由賣家在後台填入，總計會自動更新。
+- `supabase/migrations/…_init.sql`：資料表、RLS 權限、下單交易 `place_order`（鎖定商品、用資料庫價格重算、扣庫存）、取消補庫存觸發器、LINE Pay 逾時釋放 `expire_linepay_orders`
+- `lib/pickup.ts`：取貨日期規則（前台日曆和伺服器驗證共用）
+- `app/api/orders/route.ts`：建立訂單；`app/api/linepay/*`：LINE Pay 付款確認／取消
+- `data/products.json`：商品初始資料；`npm run seed:sql` 產生 `supabase/seed.sql`
 
-## 第一次部署（Cloudflare，免費方案即可）
+## 上線步驟
+
+### 1. Supabase
+1. 到 [supabase.com](https://supabase.com) 建立專案（Region 選 Tokyo 或 Singapore）。
+2. 建立資料表：打開 **SQL Editor**，依序貼上並執行
+   `supabase/migrations/20261017000000_init.sql` 和 `supabase/seed.sql`。
+   （或用 CLI：`npx supabase link` → `npx supabase db push` → 再執行 seed.sql）
+3. 建立賣家帳號：**Authentication → Users → Add user**，輸入 Email 與密碼（勾選 Auto Confirm）。
+   再到 SQL Editor 執行（Email 換成剛剛建立的）：
+   ```sql
+   insert into admin_users (user_id) select id from auth.users where email = '你的email';
+   ```
+4. **Authentication → Sign In / Providers**：關閉「Allow new users to sign up」，避免陌生人註冊。
+5. **Project Settings → API** 記下 Project URL、anon key、service_role key。
+
+### 2. LINE Pay（先用 Sandbox）
+到 [LINE Pay Developers](https://pay.line.me/tw/developers/techsupport/sandbox/creation) 申請 Sandbox，取得 Channel ID 與 Channel Secret。正式上線時換成正式商店的金鑰，並把 `LINEPAY_ENV` 改成 `production`。
+
+### 3. Vercel
+1. 在 Vercel 匯入這個 GitHub repo，**Root Directory 設為 `dessert-shop`**。
+2. 在 Environment Variables 填入 `.env.example` 列出的變數（`SITE_URL` 填 Vercel 給的正式網址）。
+3. Deploy。之後推到 main 分支就會自動更新。
+
+## 本機開發
 
 ```bash
-cd dessert-shop
 npm install
-npx wrangler login
-npx wrangler d1 create wud-dessert-orders     # 把回傳的 database_id 貼進 wrangler.jsonc
-npm run db:migrate                            # 建立訂單資料表
-npx wrangler secret put ADMIN_PASSWORD        # 設定後台密碼
-npm run deploy                                # 會得到 https://wud-dessert.<帳號>.workers.dev
+npx supabase start          # 需要 Docker；會印出本機 URL 與金鑰
+npx supabase db reset       # 套用 migration + seed
+cp .env.example .env.local  # 填入 supabase start 印出的值
+npm run dev                 # http://localhost:3000
+npm test                    # 取貨規則與 LINE Pay 簽章測試
 ```
 
-之後修改菜單或頁面，再執行一次 `npm run deploy` 即可。也可以在 Cloudflare 綁定自己的網域。
+## 規則補充
 
-## 本機測試
-
-```bash
-echo "ADMIN_PASSWORD=test123" > .dev.vars
-npm run db:migrate:local
-npm run dev          # 開 http://localhost:8787 ，後台是 /admin.html
-npm test             # 訂單檢查的單元測試
-```
-
-## 訂單狀態
-
-待確認 → 待付款 → 已付款 → 可取貨／已出貨 → 已完成（或已取消）。
-狀態名稱定義在 `src/orders.js` 的 `STATUSES`。
+- 金額、取貨日期時段、商品狀態、庫存都在伺服器重新驗證；訂單明細保存商品名稱與單價快照。
+- LINE Pay 訂單在付款確認（Confirm API 成功且金額相符）後才標記為已付款；
+  客人取消、付款失敗或 20 分鐘未付款（`store_settings.linepay_timeout_minutes`）會自動取消並補回現貨。
+- 訂單取消後無法恢復（避免重複扣庫存）；LINE Pay 已付款的訂單取消後，請在 LINE Pay 商家後台退款，再於後台標記「已退款」。
+- 公休日設定不會自動取消當天已有的訂單，後台會列出受影響訂單提醒聯繫客人。
+- 品牌色定義在 `app/globals.css` 的 `@theme`；商品照片在後台「商品」頁直接上傳（自動裁成正方形並壓縮）。

@@ -1,0 +1,27 @@
+@import 'tailwindcss';
+
+/* Brand colours from the printed menu; update here when the shop sends final values. */
+@theme {
+  --color-brick: #b23a48;
+  --color-brick-dark: #8f2d39;
+  --color-blush: #ebcbcb;
+  --color-blush-light: #f6e4e2;
+  --color-cream: #f7f2ec;
+  --color-paper: #fffbf7;
+  --color-ink: #4a3030;
+  --color-muted: #8a6e6b;
+  --color-line: #eaddd5;
+  --font-sans: 'Noto Sans TC', ui-sans-serif, system-ui, sans-serif;
+}
+
+body {
+  background: var(--color-cream);
+  color: var(--color-ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+@keyframes bump {
+  30% { transform: scale(1.15); }
+  100% { transform: scale(1); }
+}
+.animate-bump { animation: bump 0.35s ease; }
