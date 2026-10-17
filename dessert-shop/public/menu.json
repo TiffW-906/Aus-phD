@@ -1,0 +1,56 @@
+{
+  "shop": {
+    "name": "Wu.D dessert",
+    "lineId": "@327uqhcn",
+    "lineUrl": "https://line.me/R/ti/p/@327uqhcn",
+    "instagram": "wu.d_dessert",
+    "pickupAddress": "確認訂單時以 LINE 告知",
+    "leadDays": 2,
+    "shippingNote": "7-11 店到店與黑貓宅配的運費另計，店家確認訂單後會透過 LINE 通知金額。"
+  },
+  "tags": {
+    "frozen": { "icon": "❄", "label": "冷凍商品" },
+    "fresh": { "icon": "☀", "label": "當日出爐為常溫，否則冷凍" },
+    "made": { "icon": "🚚", "label": "接單製作" }
+  },
+  "categories": [
+    { "id": "main", "name": "主要商品", "en": "Main Products" },
+    { "id": "bread", "name": "麵包", "en": "Breads" },
+    { "id": "drink", "name": "罐裝冷飲", "en": "Drinks" },
+    { "id": "cookie", "name": "常溫餅乾", "en": "Cookies" }
+  ],
+  "products": [
+    { "id": "dacquoise", "category": "main", "name": "冰心達克瓦茲", "price": 100, "tag": "frozen", "image": "",
+      "flavorGroups": [
+        { "name": "茶香系", "flavors": ["宇治抹茶", "英式伯爵", "碳焙鐵觀音", "柑橘四季春"] },
+        { "name": "堅果系", "flavors": ["可可榛果", "OREO脆脆"] },
+        { "name": "果香系", "flavors": ["宜蘭金棗", "草莓奶霜"] }
+      ] },
+    { "id": "pineapple-puff", "category": "main", "name": "生乳菠蘿泡芙", "price": 70, "tag": "frozen", "image": "",
+      "flavors": ["原味牛奶", "宇治抹茶", "英式伯爵", "法芙娜可可"] },
+    { "id": "mini-puff", "category": "main", "name": "生乳小泡芙（六入杯裝）", "price": 150, "tag": "frozen", "image": "",
+      "flavors": ["原味牛奶", "宇治抹茶", "英式伯爵", "法芙娜可可"] },
+    { "id": "quiche", "category": "main", "name": "手工鹹派", "price": 90, "tag": "fresh", "image": "",
+      "flavors": ["義式蔬菜雞肉", "經典宜蘭鴨賞", "蔬食菇菇派對"] },
+    { "id": "tiramisu", "category": "main", "name": "義式提拉米蘇", "price": 150, "tag": "frozen", "image": "",
+      "flavors": ["經典原味（含酒）", "OREO巧克力"] },
+    { "id": "brownie", "category": "main", "name": "可可布朗尼（三入盒裝）", "price": 150, "tag": "fresh", "image": "" },
+    { "id": "panna-cotta", "category": "main", "name": "原味鮮奶酪（六入盒裝）", "price": 300, "image": "" },
+    { "id": "creme-brulee", "category": "main", "name": "香草布蕾（六入盒裝）", "price": 360, "image": "" },
+
+    { "id": "pineapple-bun", "category": "bread", "name": "原味菠蘿", "price": 40, "tag": "fresh", "image": "" },
+    { "id": "salt-croissant", "category": "bread", "name": "鹽可頌（三入）", "price": 150, "tag": "fresh", "image": "" },
+
+    { "id": "cranberry-lemon", "category": "drink", "name": "蔓越莓檸檬", "price": 70, "image": "" },
+    { "id": "milk-tea", "category": "drink", "name": "古早味奶茶", "price": 60, "image": "" },
+    { "id": "cold-brew", "category": "drink", "name": "冷萃咖啡", "price": 100, "image": "" },
+
+    { "id": "butter-cookie-mini", "category": "cookie", "name": "原味奶油小餅乾（罐裝）", "price": 120, "tag": "made", "image": "" },
+    { "id": "butter-cookie", "category": "cookie", "name": "奶油餅乾（罐裝）", "price": 150, "tag": "made", "image": "",
+      "flavors": ["可可杏仁", "抹茶蔓越莓", "花生", "英式伯爵", "碳焙鐵觀音"] },
+    { "id": "almond-tuile", "category": "cookie", "name": "杏仁瓦片（罐裝）", "price": 250, "tag": "made", "image": "" },
+    { "id": "cookie-box", "category": "cookie", "name": "曲奇餅乾（盒裝）", "price": 280, "tag": "made", "image": "",
+      "flavors": ["原味", "法芙娜可可", "宇治抹茶", "英式伯爵", "碳焙鐵觀音"] },
+    { "id": "pearl-puff", "category": "cookie", "name": "珍珠小泡芙（袋裝）", "price": 150, "tag": "made", "image": "" }
+  ]
+}

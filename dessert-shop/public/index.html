@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Wu.D dessert 線上訂購</title>
+  <meta name="description" content="Wu.D dessert 甜點線上訂購：達克瓦茲、泡芙、鹹派、提拉米蘇、餅乾。">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <p class="brand">Wu.D dessert</p>
+      <h1>MENU</h1>
+      <p class="hero-sub">7-11 店到店 ／ 黑貓宅配 ／ 工作室自取</p>
+    </div>
+  </header>
+
+  <nav class="cat-nav" id="cat-nav" aria-label="商品分類"></nav>
+
+  <main id="menu" class="menu"></main>
+
+  <section class="legend" id="legend" aria-label="標示說明"></section>
+
+  <footer class="site-footer">
+    <p>無現貨皆可預訂，另有整模蛋糕、餐盒、禮盒，歡迎 LINE 詢問</p>
+    <p><a id="line-link" target="_blank" rel="noopener">LINE：<span id="line-id"></span></a></p>
+  </footer>
+
+  <button class="cart-fab" id="cart-fab" type="button" aria-label="開啟購物車">
+    <span class="cart-fab-icon" aria-hidden="true">🛒</span>
+    <span class="cart-fab-text">購物車</span>
+    <span class="cart-fab-total" id="cart-fab-total">$0</span>
+    <span class="badge" id="cart-badge">0</span>
+  </button>
+
+  <div class="overlay" id="overlay" hidden></div>
+  <aside class="drawer" id="drawer" aria-label="購物車" aria-hidden="true">
+    <div class="drawer-head">
+      <h2 id="drawer-title">購物車</h2>
+      <button type="button" class="icon-btn" id="drawer-close" aria-label="關閉">✕</button>
+    </div>
+    <div class="steps" id="steps">
+      <span class="step active" data-step="cart">1 確認商品</span>
+      <span class="step" data-step="checkout">2 填寫資料</span>
+      <span class="step" data-step="done">3 完成</span>
+    </div>
+
+    <section class="drawer-body" id="view-cart">
+      <ul class="cart-list" id="cart-list"></ul>
+      <p class="empty" id="cart-empty">還沒有選購商品，挑一些甜點吧！</p>
+    </section>
+
+    <form class="drawer-body" id="view-checkout" hidden novalidate>
+      <fieldset>
+        <legend>取貨方式</legend>
+        <div class="choice-row" id="fulfillment-choices"></div>
+        <label class="field" id="address-field" hidden>
+          <span id="address-label">地址</span>
+          <input name="address" autocomplete="street-address">
+        </label>
+        <p class="hint" id="fulfillment-hint"></p>
+      </fieldset>
+      <fieldset>
+        <legend>希望取貨／到貨日期</legend>
+        <div class="two-col">
+          <label class="field"><span>日期</span><input type="date" name="pickupDate" required></label>
+          <label class="field" id="time-field"><span>自取時段</span>
+            <select name="pickupTime">
+              <option value="">請選擇</option>
+              <option>12:00–14:00</option>
+              <option>14:00–16:00</option>
+              <option>16:00–18:00</option>
+              <option>18:00–20:00</option>
+            </select>
+          </label>
+        </div>
+      </fieldset>
+      <fieldset>
+        <legend>訂購人資料</legend>
+        <label class="field"><span>姓名 *</span><input name="customerName" required autocomplete="name"></label>
+        <label class="field"><span>手機 *</span><input name="phone" required inputmode="tel" autocomplete="tel" placeholder="0912345678"></label>
+        <label class="field"><span>LINE 名稱（方便核對付款）</span><input name="lineName"></label>
+        <label class="field hp" aria-hidden="true"><span>Website</span><input name="website" tabindex="-1" autocomplete="off"></label>
+      </fieldset>
+      <fieldset>
+        <legend>付款方式</legend>
+        <div class="choice-row" id="payment-choices"></div>
+        <p class="hint" id="payment-hint"></p>
+      </fieldset>
+      <label class="field"><span>備註</span><textarea name="note" rows="3" placeholder="過敏原、生日卡片、特殊需求…"></textarea></label>
+      <p class="form-error" id="form-error" role="alert"></p>
+    </form>
+
+    <section class="drawer-body" id="view-done" hidden>
+      <div class="done-card">
+        <p class="done-check" aria-hidden="true">✓</p>
+        <h3>訂單已送出！</h3>
+        <p>訂單編號</p>
+        <p class="order-id" id="done-id"></p>
+        <p id="done-summary"></p>
+        <div id="done-next"></div>
+      </div>
+    </section>
+
+    <div class="drawer-foot" id="drawer-foot">
+      <div class="total-row"><span>商品小計</span><strong id="cart-total">$0</strong></div>
+      <p class="hint" id="shipping-line"></p>
+      <div class="foot-actions">
+        <button type="button" class="btn ghost" id="btn-back" hidden>← 返回</button>
+        <button type="button" class="btn primary" id="btn-next" disabled>前往結帳</button>
+      </div>
+    </div>
+  </aside>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+  <script src="app.js" type="module"></script>
+</body>
+</html>

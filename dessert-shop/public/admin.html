@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title>Wu.D 訂單後台</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;700&family=Noto+Serif+TC:wght@600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="admin.css">
+</head>
+<body>
+  <section class="login" id="login">
+    <form class="login-card" id="login-form">
+      <p class="brand">Wu.D dessert</p>
+      <h1>訂單後台</h1>
+      <label class="field"><span>管理密碼</span><input type="password" name="password" required autocomplete="current-password"></label>
+      <p class="form-error" id="login-error" role="alert"></p>
+      <button class="btn primary" type="submit">登入</button>
+    </form>
+  </section>
+
+  <div class="admin" id="admin" hidden>
+    <header class="admin-head">
+      <div><p class="brand">Wu.D dessert</p><h1>訂單後台</h1></div>
+      <div class="head-actions">
+        <button class="btn ghost" id="refresh" type="button">重新整理</button>
+        <button class="btn ghost" id="export" type="button">匯出 CSV</button>
+        <button class="btn ghost" id="logout" type="button">登出</button>
+      </div>
+    </header>
+
+    <form class="filters" id="filters">
+      <label class="field"><span>狀態</span><select name="status"><option value="">全部</option></select></label>
+      <label class="field"><span>取貨日 從</span><input type="date" name="from"></label>
+      <label class="field"><span>到</span><input type="date" name="to"></label>
+      <label class="field grow"><span>搜尋（編號／姓名／電話／LINE）</span><input name="q" type="search"></label>
+      <div class="quick">
+        <button type="button" class="chip" data-quick="today">今天取貨</button>
+        <button type="button" class="chip" data-quick="week">7 天內</button>
+        <button type="button" class="chip" data-quick="clear">清除</button>
+      </div>
+    </form>
+
+    <section class="stats" id="stats"></section>
+
+    <div class="tabs" role="tablist">
+      <button class="tab active" data-tab="orders" role="tab">訂單列表</button>
+      <button class="tab" data-tab="prep" role="tab">備料統計</button>
+    </div>
+
+    <section id="tab-orders"><div id="orders"></div></section>
+    <section id="tab-prep" hidden>
+      <p class="hint">依目前篩選條件、排除「已取消」訂單，彙總每個品項與口味需要製作的數量。</p>
+      <table class="prep"><thead><tr><th>品項</th><th>口味</th><th>數量</th></tr></thead><tbody id="prep"></tbody></table>
+    </section>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="admin.js" type="module"></script>
+</body>
+</html>
