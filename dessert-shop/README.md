@@ -26,7 +26,7 @@
 ### 1. Supabase
 1. 到 [supabase.com](https://supabase.com) 建立專案（Region 選 Tokyo 或 Singapore）。
 2. 建立資料表：打開 **SQL Editor**，依序貼上並執行
-   `supabase/migrations/20261017000000_init.sql` 和 `supabase/seed.sql`。
+   `supabase/migrations/` 裡的每個檔案（依檔名順序），再執行 `supabase/seed.sql`。
    （或用 CLI：`npx supabase link` → `npx supabase db push` → 再執行 seed.sql）
 3. 建立賣家帳號：**Authentication → Users → Add user**，輸入 Email 與密碼（勾選 Auto Confirm）。
    再到 SQL Editor 執行（Email 換成剛剛建立的）：
@@ -36,8 +36,13 @@
 4. **Authentication → Sign In / Providers**：關閉「Allow new users to sign up」，避免陌生人註冊。
 5. **Project Settings → API** 記下 Project URL、anon key、service_role key。
 
-### 2. LINE Pay（先用 Sandbox）
-到 [LINE Pay Developers](https://pay.line.me/tw/developers/techsupport/sandbox/creation) 申請 Sandbox，取得 Channel ID 與 Channel Secret。正式上線時換成正式商店的金鑰，並把 `LINEPAY_ENV` 改成 `production`。
+### 2. LINE Pay
+有兩種方式，網站會自動判斷：
+- **收款碼（目前使用）**：不用填 LINE Pay 環境變數。登入後台 → 設定 → 上傳 LINE Pay 收款碼。
+  客人選 LINE Pay 下單後，訂單頁顯示收款碼與金額；收到款項後在訂單詳細頁按「標記已收到 LINE Pay」。
+  這種訂單不會自動逾時取消。
+- **線上付款 API**：申請 LINE Pay 線上付款商店後，在 Vercel 填入 `LINEPAY_CHANNEL_ID`、`LINEPAY_CHANNEL_SECRET`、
+  `LINEPAY_ENV`（`sandbox` 或 `production`），就會改成自動導向 LINE Pay 付款並自動確認。
 
 ### 3. Vercel
 1. 在 Vercel 匯入這個 GitHub repo，**Root Directory 設為 `dessert-shop`**。
@@ -58,7 +63,7 @@ npm test                    # 取貨規則與 LINE Pay 簽章測試
 ## 規則補充
 
 - 金額、取貨日期時段、商品狀態、庫存都在伺服器重新驗證；訂單明細保存商品名稱與單價快照。
-- LINE Pay 訂單在付款確認（Confirm API 成功且金額相符）後才標記為已付款；
+- 使用 LINE Pay API 時，訂單在付款確認（Confirm API 成功且金額相符）後才標記為已付款；
   客人取消、付款失敗或 20 分鐘未付款（`store_settings.linepay_timeout_minutes`）會自動取消並補回現貨。
 - 訂單取消後無法恢復（避免重複扣庫存）；LINE Pay 已付款的訂單取消後，請在 LINE Pay 商家後台退款，再於後台標記「已退款」。
 - 公休日設定不會自動取消當天已有的訂單，後台會列出受影響訂單提醒聯繫客人。

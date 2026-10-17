@@ -6,12 +6,14 @@ import { useCart } from '@/lib/cart';
 import { money, shortDate } from '@/lib/format';
 import { pickupWindow, slotsFor, taipeiNow } from '@/lib/pickup';
 import type { ClosedDate, PaymentMethod, StoreSettings } from '@/lib/types';
+import type { LinePayMode } from '@/lib/linepay';
 import { Calendar } from '@/components/Calendar';
 import { PickupInfo } from '@/components/ShopInfo';
 
 const input = 'w-full rounded-xl border border-line bg-white px-3 py-2.5 outline-none focus:border-brick focus:ring-2 focus:ring-blush';
 
-export function CheckoutForm({ settings, closedDates, linePayEnabled }: { settings: StoreSettings; closedDates: ClosedDate[]; linePayEnabled: boolean }) {
+export function CheckoutForm({ settings, closedDates, linePayMode }: { settings: StoreSettings; closedDates: ClosedDate[]; linePayMode: LinePayMode }) {
+  const linePayEnabled = linePayMode !== 'off';
   const cart = useCart();
   const router = useRouter();
   const [now, setNow] = useState<Date | null>(null);
@@ -165,7 +167,7 @@ export function CheckoutForm({ settings, closedDates, linePayEnabled }: { settin
                 disabled={!linePayEnabled}
                 onChange={() => setPayment('linepay')}
                 title="LINE Pay"
-                desc={linePayEnabled ? '線上付款，完成後訂單即成立' : '暫時無法使用'}
+                desc={linePayMode === 'api' ? '線上付款，完成後訂單即成立' : linePayMode === 'qr' ? '送出後顯示收款碼，掃碼付款' : '暫時無法使用'}
               />
               <PayOption checked={payment === 'cash'} onChange={() => setPayment('cash')} title="現場自取付現金" desc="取貨時於工作室付款" />
             </div>
@@ -202,7 +204,7 @@ export function CheckoutForm({ settings, closedDates, linePayEnabled }: { settin
             disabled={submitting || !pickup?.earliest}
             className="w-full rounded-full bg-brick py-3.5 text-lg font-bold text-white shadow-lg hover:bg-brick-dark disabled:bg-blush"
           >
-            {submitting ? '送出中…' : payment === 'linepay' ? '前往 LINE Pay 付款' : '送出訂單'}
+            {submitting ? '送出中…' : payment === 'linepay' && linePayMode === 'api' ? '前往 LINE Pay 付款' : '送出訂單'}
           </button>
           <Link href="/" className="block text-center text-sm text-muted underline">
             ← 繼續選購

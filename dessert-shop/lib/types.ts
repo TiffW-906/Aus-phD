@@ -30,6 +30,8 @@ export type StoreSettings = {
   same_day_buffer_minutes: number;
   max_days_ahead: number;
   linepay_timeout_minutes: number;
+  /** The shop's LINE Pay payment QR code, used when there are no LINE Pay API keys. */
+  linepay_qr_url: string | null;
 };
 
 export type ClosedDate = { date: string; reason: string };

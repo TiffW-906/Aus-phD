@@ -1,6 +1,6 @@
 'use client';
 import Link from 'next/link';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { supabaseBrowser } from '@/lib/supabase/client';
 import { hhmm, money, shortDate } from '@/lib/format';
 import { isoWeekday, taipeiNow } from '@/lib/pickup';
@@ -21,6 +21,8 @@ export default function SettingsPage() {
   const [saving, setSaving] = useState(false);
   const [pending, setPending] = useState<{ date: string; orders: OrderWithItems[] } | null>(null);
   const [reason, setReason] = useState('');
+  const [uploadingQr, setUploadingQr] = useState(false);
+  const qrInput = useRef<HTMLInputElement>(null);
 
   const loadClosed = useCallback(async () => {
     const { data } = await supabase.from('closed_dates').select('*').gte('date', today).order('date');
@@ -42,7 +44,25 @@ export default function SettingsPage() {
 
   async function saveSettings(e: React.FormEvent) {
     e.preventDefault();
+    async function saveQr(file: File | null) {
     if (!settings) return;
+    let url: string | null = null;
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) return feed.toast('圖片太大，請小於 5MB');
+      setUploadingQr(true);
+      const path = `shop/linepay-qr-${Date.now()}.${file.name.split('.').pop() || 'png'}`;
+      const { error } = await supabase.storage.from('product-images').upload(path, file, { contentType: file.type });
+      setUploadingQr(false);
+      if (error) return feed.toast(`上傳失敗：${error.message}`);
+      url = supabase.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+    }
+    const { error } = await supabase.from('store_settings').update({ linepay_qr_url: url }).eq('id', 1);
+    if (error) return feed.toast(`儲存失敗：${error.message}`);
+    setSettings({ ...settings, linepay_qr_url: url });
+    feed.toast(url ? 'LINE Pay 收款碼已更新' : '已移除收款碼，結帳頁將不提供 LINE Pay');
+  }
+
+  if (!settings) return;
     if (settings.open_weekdays.length === 0) return feed.toast('至少要選一天營業取貨日');
     if (settings.open_time >= settings.close_time) return feed.toast('結束時間要晚於開始時間');
     setSaving(true);
@@ -74,6 +94,24 @@ export default function SettingsPage() {
     feed.toast(`${shortDate(pending.date)} 已設為公休`);
     setPending(null);
     void loadClosed();
+  }
+
+  async function saveQr(file: File | null) {
+    if (!settings) return;
+    let url: string | null = null;
+    if (file) {
+      if (file.size > 5 * 1024 * 1024) return feed.toast('圖片太大，請小於 5MB');
+      setUploadingQr(true);
+      const path = `shop/linepay-qr-${Date.now()}.${file.name.split('.').pop() || 'png'}`;
+      const { error } = await supabase.storage.from('product-images').upload(path, file, { contentType: file.type });
+      setUploadingQr(false);
+      if (error) return feed.toast(`上傳失敗：${error.message}`);
+      url = supabase.storage.from('product-images').getPublicUrl(path).data.publicUrl;
+    }
+    const { error } = await supabase.from('store_settings').update({ linepay_qr_url: url }).eq('id', 1);
+    if (error) return feed.toast(`儲存失敗：${error.message}`);
+    setSettings({ ...settings, linepay_qr_url: url });
+    feed.toast(url ? 'LINE Pay 收款碼已更新' : '已移除收款碼，結帳頁將不提供 LINE Pay');
   }
 
   if (!settings) return <p className="py-10 text-center text-muted">載入中…</p>;
@@ -118,6 +156,38 @@ export default function SettingsPage() {
             ))}
           </ul>
         )}
+      </section>
+
+      <section className="rounded-2xl bg-paper p-4 shadow-sm">
+        <h2 className="font-bold">LINE Pay 收款碼</h2>
+        <p className="mb-3 text-sm text-muted">客人選 LINE Pay 下單後，訂單頁會顯示這張收款碼。收到款項後，請在訂單頁按「標記已收到 LINE Pay」。</p>
+        {settings.linepay_qr_url ? (
+          // eslint-disable-next-line @next/next/no-img-element
+          <img src={settings.linepay_qr_url} alt="LINE Pay 收款碼" className="mx-auto w-48 rounded-xl border border-line bg-white p-2" />
+        ) : (
+          <p className="rounded-xl bg-amber-50 p-3 text-sm text-amber-900">尚未上傳收款碼，結帳頁的 LINE Pay 選項目前無法選擇。</p>
+        )}
+        <input
+          ref={qrInput}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => {
+            const f = e.target.files?.[0];
+            e.target.value = '';
+            if (f) void saveQr(f);
+          }}
+        />
+        <div className="mt-3 flex gap-2">
+          <button type="button" disabled={uploadingQr} onClick={() => qrInput.current?.click()} className="flex-1 rounded-full bg-[#06c755] py-2.5 font-bold text-white disabled:opacity-50">
+            {uploadingQr ? '上傳中…' : settings.linepay_qr_url ? '更換收款碼' : '上傳收款碼圖片'}
+          </button>
+          {settings.linepay_qr_url && (
+            <button type="button" onClick={() => confirm('移除後客人將無法選擇 LINE Pay，確定嗎？') && void saveQr(null)} className="rounded-full border border-line px-4 text-sm text-muted">
+              移除
+            </button>
+          )}
+        </div>
       </section>
 
       <form onSubmit={saveSettings} className="space-y-4 rounded-2xl bg-paper p-4 shadow-sm">

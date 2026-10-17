@@ -3,7 +3,7 @@ import { loadStore } from '@/lib/store';
 import { validatePickup } from '@/lib/pickup';
 import { supabaseService } from '@/lib/supabase/server';
 import { cancelOrder, newOrderNo, placeOrderError } from '@/lib/orders';
-import { linePayConfigured, requestPayment } from '@/lib/linepay';
+import { linePayMode, requestPayment } from '@/lib/linepay';
 import type { PaymentMethod } from '@/lib/types';
 
 type Body = {
@@ -35,7 +35,6 @@ export async function POST(request: Request) {
   if (!customerName) return fail('請填寫姓名');
   if (!/^09\d{8}$/.test(phone)) return fail('請填寫正確的手機號碼（09 開頭共 10 碼）');
   if (paymentMethod !== 'linepay' && paymentMethod !== 'cash') return fail('請選擇付款方式');
-  if (paymentMethod === 'linepay' && !linePayConfigured()) return fail('LINE Pay 暫時無法使用，請改選現場付現', 503);
 
   const rawItems = Array.isArray(body.items) ? body.items : [];
   if (rawItems.length === 0) return fail('購物車是空的');
@@ -45,6 +44,8 @@ export async function POST(request: Request) {
   await db.rpc('expire_linepay_orders');
   const { products, settings, closedDates } = await loadStore();
   const byId = new Map(products.map((p) => [p.id, p]));
+  const mode = linePayMode(settings);
+  if (paymentMethod === 'linepay' && mode === 'off') return fail('LINE Pay 暫時無法使用，請改選現場付現', 503);
 
   const items = [];
   for (const raw of rawItems) {
@@ -89,7 +90,8 @@ export async function POST(request: Request) {
   }
   if (!placed) return fail('系統忙碌，請稍後再試', 500);
 
-  if (paymentMethod === 'cash') return NextResponse.json({ orderNo: placed.order_no });
+  // Cash, and LINE Pay by QR code: the order page shows what to do next.
+  if (paymentMethod === 'cash' || mode === 'qr') return NextResponse.json({ orderNo: placed.order_no });
 
   const site = process.env.SITE_URL || new URL(request.url).origin;
   try {

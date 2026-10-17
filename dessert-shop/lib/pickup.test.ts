@@ -10,6 +10,7 @@ const settings: StoreSettings = {
   same_day_buffer_minutes: 60,
   max_days_ahead: 30,
   linepay_timeout_minutes: 20,
+  linepay_qr_url: null,
 };
 // Monday 2026-10-19 13:10 in Taipei.
 const monday = new Date('2026-10-19T05:10:00Z');

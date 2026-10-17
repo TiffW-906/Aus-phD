@@ -141,6 +141,16 @@ export default function OrderDetail() {
               </button>
             ))}
           </div>
+          {order.payment_status === 'unpaid' && order.payment_method === 'linepay' && !order.linepay_transaction_id && (
+            <button
+              type="button"
+              disabled={busy}
+              onClick={() => update({ payment_status: 'paid', paid_at: new Date().toISOString() }, '已標記收到 LINE Pay 款項')}
+              className={`${btn} w-full bg-[#06c755] text-white`}
+            >
+              標記已收到 LINE Pay {money(order.total_amount)}
+            </button>
+          )}
           {order.payment_status === 'unpaid' && order.payment_method === 'cash' && (
             <button
               type="button"
@@ -151,12 +161,12 @@ export default function OrderDetail() {
               💵 標記已收現金 {money(order.total_amount)}
             </button>
           )}
-          {order.payment_status === 'paid' && order.payment_method === 'cash' && (
+          {order.payment_status === 'paid' && !order.linepay_transaction_id && (
             <button type="button" disabled={busy} onClick={() => update({ payment_status: 'unpaid', paid_at: null }, '已改回未付款')} className="text-sm text-muted underline">
               改回未付款
             </button>
           )}
-          {order.payment_method === 'linepay' && order.payment_status === 'unpaid' && (
+          {order.payment_method === 'linepay' && order.payment_status === 'unpaid' && order.linepay_transaction_id && (
             <p className="text-sm text-muted">等待客人完成 LINE Pay 付款，逾時未付會自動取消並釋放現貨。</p>
           )}
           <button
@@ -171,7 +181,7 @@ export default function OrderDetail() {
             取消訂單
           </button>
           {order.payment_status === 'paid' && order.payment_method === 'linepay' && (
-            <p className="text-xs text-muted">LINE Pay 已付款的訂單若要取消，請到 LINE Pay 商家後台退款，再按下方「標記已退款」。</p>
+            <p className="text-xs text-muted">LINE Pay 已付款的訂單若要取消，請先在 LINE Pay 退款給客人，取消後再按「標記已退款」。</p>
           )}
         </div>
       )}

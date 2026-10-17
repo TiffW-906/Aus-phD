@@ -33,6 +33,7 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
   const cancelled = order.order_status === 'cancelled';
   const awaitingLinePay = order.payment_method === 'linepay' && order.payment_status === 'unpaid' && !cancelled;
   const message = payment ? PAYMENT_MESSAGES[payment] : undefined;
+  const payByQr = awaitingLinePay && !order.linepay_transaction_id && settings.linepay_qr_url;
 
   return (
     <div className="mx-auto max-w-xl px-4 pt-6 pb-16">
@@ -62,6 +63,30 @@ export default async function OrderPage({ params, searchParams }: { params: Prom
         <a href={order.linepay_payment_url} className="mt-4 block rounded-full bg-[#06c755] py-3 text-center font-bold text-white">
           前往 LINE Pay 完成付款
         </a>
+      )}
+
+      {payByQr && (
+        <section className="mt-4 rounded-2xl border-2 border-[#06c755] bg-paper p-5 text-center">
+          <h2 className="text-lg font-bold">請用 LINE Pay 付款 {money(order.total_amount)}</h2>
+          {/* eslint-disable-next-line @next/next/no-img-element */}
+          <img src={settings.linepay_qr_url!} alt="Wu.D dessert LINE Pay 收款碼" className="mx-auto mt-3 w-60 max-w-full rounded-xl bg-white p-2" />
+          <ol className="mt-3 list-decimal space-y-1 pl-5 text-left text-sm">
+            <li>用 LINE 的「掃描」掃這個收款碼（用同一支手機時，先截圖，再於掃描畫面選擇相簿中的圖片）</li>
+            <li>
+              輸入金額 <b>{money(order.total_amount)}</b> 並完成付款
+            </li>
+            <li>
+              付款後，把付款截圖和訂單編號 <b className="font-mono">{order.order_no}</b> 傳到 LINE{' '}
+              <a href={SHOP.lineUrl} target="_blank" rel="noopener" className="font-bold text-brick">
+                {SHOP.lineId}
+              </a>
+            </li>
+          </ol>
+          <p className="mt-3 text-xs text-muted">店家確認收款後，此頁的付款狀態會改為「已付款」</p>
+          <a href={SHOP.lineUrl} target="_blank" rel="noopener" className="mt-3 block rounded-full bg-[#06c755] py-3 font-bold text-white">
+            付款後傳截圖給我們
+          </a>
+        </section>
       )}
 
       <section className="mt-4 space-y-3 rounded-2xl bg-paper p-5 shadow-[0_6px_20px_rgba(120,60,55,0.08)]">

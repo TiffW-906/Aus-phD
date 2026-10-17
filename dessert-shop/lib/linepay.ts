@@ -15,6 +15,16 @@ function config() {
 
 export const linePayConfigured = () => config() !== null;
 
+/**
+ * How customers pay with LINE Pay: through the API (merchant keys set), by scanning the
+ * shop's QR code (uploaded in /admin/settings, seller confirms by hand), or not at all.
+ */
+export type LinePayMode = 'api' | 'qr' | 'off';
+export function linePayMode(settings: { linepay_qr_url: string | null }): LinePayMode {
+  if (linePayConfigured()) return 'api';
+  return settings.linepay_qr_url ? 'qr' : 'off';
+}
+
 export function signature(secret: string, path: string, body: string, nonce: string) {
   return createHmac('sha256', secret).update(secret + path + body + nonce).digest('base64');
 }

@@ -1,6 +1,7 @@
 import type { Metadata } from 'next';
 import { CartProvider } from '@/lib/cart';
 import { loadStore } from '@/lib/store';
+import { linePayMode } from '@/lib/linepay';
 import { CheckoutForm } from './CheckoutForm';
 
 export const dynamic = 'force-dynamic';
@@ -10,7 +11,7 @@ export default async function CheckoutPage() {
   const { products, settings, closedDates } = await loadStore();
   return (
     <CartProvider products={products}>
-      <CheckoutForm settings={settings} closedDates={closedDates} linePayEnabled={!!process.env.LINEPAY_CHANNEL_ID} />
+      <CheckoutForm settings={settings} closedDates={closedDates} linePayMode={linePayMode(settings)} />
     </CartProvider>
   );
 }
